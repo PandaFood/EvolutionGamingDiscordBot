@@ -6,7 +6,7 @@ module.exports = {
 	execute(message: Discord.Message) {
 
         const crabImage = new Discord.MessageEmbed()
-	        .attachFiles(['../../assets/crab.jpg'])
+	        .attachFiles(['../assets/crab.jpg'])
 	        .setImage('attachment://crab.jpg');
 		message.channel.send(crabImage);
 	},
