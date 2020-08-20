@@ -26,7 +26,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: 14.x
 
     steps:
     - uses: actions/checkout@v2
@@ -63,7 +63,7 @@ jobs:
           echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}      
 
       - name: Build image
-        run: docker buildx . --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} 
+        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} 
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
