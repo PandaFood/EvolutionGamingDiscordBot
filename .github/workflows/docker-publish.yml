@@ -26,7 +26,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [14.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -36,6 +36,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build --if-present
+  
+    
+    - uses: actions/upload-artifact@master
+      with:
+        name: dist
+        path: dist/**/*
 
 
   # Push image to GitHub Packages.
@@ -45,20 +51,35 @@ jobs:
 
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    env:
+      DOCKER_TARGET_PLATFORM: linux/arm/v7 
+      DOCKER_REGISTRY: docker.pkg.github.com     
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - uses: actions/download-artifact@master
+        with:
+          name: dist
+          path: dist
+  
+      - name: Display structure of downloaded files
+        run: ls -R
+      
+      - name: Set up Docker Buildx      
+        uses: crazy-max/ghaction-docker-buildx@v1      
+        with:        
+          version: latest
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Push image
+        
+      - name: Prepare       
+        if: success()      
+        id: prepare      
         run: |
-          IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-
+          IMAGE_ID=${{ github.repository }}/$IMAGE_NAME
+        
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 
@@ -69,10 +90,46 @@ jobs:
           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
 
           # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
+          [ "$VERSION" == "release" ] && VERSION=latest
 
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
+          echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
+          echo ::set-output name=docker_image::${DOCKER_REGISTRY}/${IMAGE_ID}
+          echo ::set-output name=version::${VERSION}
 
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+      - name: Build image
+        run: | 
+
+          echo ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+          echo $IMAGE_NAME
+
+          docker buildx build \
+            --tag $IMAGE_NAME \
+            --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
+            --output type=image,name=${{ steps.prepare.outputs.docker_image }},push=true \
+            --platform ${{ steps.prepare.outputs.docker_platform }} \
+            --file Dockerfile .
+        
+
+      # - name: Push image
+      #   run: |
+      #     IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
+
+      #     # Change all uppercase to lowercase
+      #     IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+      #     # Strip git ref prefix from version
+      #     VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+      #     # Strip "v" prefix from tag name
+      #     [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+      #     # Use Docker `latest` tag convention
+      #     [ "$VERSION" == "release" ] && VERSION=latest
+
+      #     echo IMAGE_ID=$IMAGE_ID
+      #     echo VERSION=$VERSION
+
+      #     docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+      #     docker push $IMAGE_ID:$VERSION
