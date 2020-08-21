@@ -67,7 +67,7 @@ jobs:
         run: ls -R
       
       - name: Set up Docker Buildx      
-        uses: crazy-max/ghaction-docker-buildx@v1      
+        uses: crazy-max/ghaction-docker-buildx@v2      
         with:        
           version: latest
 
@@ -99,7 +99,7 @@ jobs:
           echo ::set-output name=version::${VERSION}
 
       - name: Build image
-        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output=type=registry
+        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --push
         
 
       # - name: Push image
