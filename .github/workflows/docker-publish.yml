@@ -70,7 +70,7 @@ jobs:
         uses: crazy-max/ghaction-docker-buildx@v1      
         with:        
           version: latest
-          
+
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
         
@@ -98,8 +98,7 @@ jobs:
           echo ::set-output name=version::${VERSION}
 
       - name: Build image
-        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} \
-             --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output type=image,push=true
+        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output type=image,push=true
         
 
       # - name: Push image
