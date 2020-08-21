@@ -100,11 +100,15 @@ jobs:
 
       - name: Build image
         run: | 
+
+          echo ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }}
+          echo $IMAGE_NAME
+
           docker buildx build \
             --tag $IMAGE_NAME \
+            --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
             --output type=image,name=${{ steps.prepare.outputs.docker_image }},push=true \
             --platform ${{ steps.prepare.outputs.docker_platform }} \
-            --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
             --file Dockerfile .
         
 
