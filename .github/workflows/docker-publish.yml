@@ -99,7 +99,7 @@ jobs:
           echo ::set-output name=version::${VERSION}
 
       - name: Build image
-        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output type=image,push=true
+        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} --output=type=registry
         
 
       # - name: Push image
