@@ -77,7 +77,10 @@ jobs:
           echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}      
 
       - name: Build image
-        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }} 
+        run: docker buildx build . --file Dockerfile --tag $IMAGE_NAME --platform ${{ steps.prepare.outputs.docker_platform }}
+        
+      - name: Display all docker images
+        run: docker images -a
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
