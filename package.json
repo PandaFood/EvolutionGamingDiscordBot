@@ -5,7 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "tsc && cd dist && node main.js",
-    "build": "tsc",
+    "build": "tsc ",
     "deploy": ""
   },
   "author": "",
