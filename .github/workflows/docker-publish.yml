@@ -102,7 +102,7 @@ jobs:
         run: | 
           docker buildx build \
             --tag $IMAGE_NAME \
-            --output type=image,name=${{ steps.prepare.outputs.docker_image }},push=true
+            --output type=image,name=${{ steps.prepare.outputs.docker_image }},push=true \
             --platform ${{ steps.prepare.outputs.docker_platform }} \
             --tag ${{ steps.prepare.outputs.docker_image }}:${{ steps.prepare.outputs.version }} \
             --file Dockerfile .
