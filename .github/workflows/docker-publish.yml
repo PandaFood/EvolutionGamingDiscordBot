@@ -67,7 +67,7 @@ jobs:
         run: ls -R
       
       - name: Set up Docker Buildx      
-        uses: crazy-max/ghaction-docker-buildx@v2      
+        uses: crazy-max/ghaction-docker-buildx@v1      
         with:        
           version: latest
 
