@@ -3,7 +3,6 @@ let { token } = require('../config/credentials.json');
 let { prefix } = require('../config/config.json');
 let fs = require('fs');
 import { initialize } from './submodules/initializer';
-import Redis from './dataStore/redis';
 
 const client = new Discord.Client();
 let commands = new Discord.Collection();

@@ -1,8 +1,10 @@
 import * as Discord from 'discord.js';
 import * as redis from 'redis';
 import { TwitchAlertAccount } from '../../models/twitchAlert.model';
+let { redisHost } = require('../../../config/config.json');
 
-let subscriber = redis.createClient();
+
+let subscriber = redis.createClient( { host: redisHost } );
 let discordClient: Discord.Client;
 
 subscriber.on("message", (subChannel, message) => {

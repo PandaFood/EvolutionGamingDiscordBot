@@ -1,8 +1,9 @@
 import * as Redis from 'redis';
 import {promisify} from 'util';
 import { TwitchAlertAccount } from '../models/twitchAlert.model';
+let { redisHost } = require('../../config/config.json');
 
-const redisClient = Redis.createClient();
+const redisClient = Redis.createClient( {host: redisHost } );
 //
 const redisGetCommand = promisify(redisClient.get).bind(redisClient);
 

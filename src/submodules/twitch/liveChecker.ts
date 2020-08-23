@@ -3,8 +3,10 @@ import redis from 'redis';
 import { TwitchAlertAccount, TwitchAccount } from "../../models/twitchAlert.model";
 import axios from 'axios';
 let { client_id, client_secret } =  require('../../../config/credentials.json');
+let { redisHost } = require('../../../config/config.json');
 
-let publisher = redis.createClient();
+
+let publisher = redis.createClient( { host: redisHost } );
 let oauth2Token: string;
 let alertAccounts: Array<TwitchAlertAccount> = [];
 

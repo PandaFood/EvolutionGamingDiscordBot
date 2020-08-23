@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  discord-bot:
+    build: .
+    volumes:
+      - ./config:/usr/src/config
+    command: npm start
+    depends_on: 
+      - redis
+    links: 
+      - redis
+    networks:
+      redisNet:
+        aliases: 
+          - discordBot
+
+
+  redis:
+    image: redis:6.0-alpine
+    ports:
+      - '6379:6379'
+    networks:
+      redisNet:
+        aliases: 
+          - redis
+
+networks:
+  redisNet:
