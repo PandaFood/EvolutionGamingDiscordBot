@@ -1,5 +1,6 @@
 #builder
-FROM node:14.8 as builder
+#FROM node:14.8 as builder
+FROM arm32v7/node:14.8 as builder
 WORKDIR /usr/src/
 COPY . .
 RUN npm install
@@ -8,7 +9,8 @@ RUN npm run build
 
 
 #prod
-FROM node:14.8
+#FROM node:14.8
+FROM arm32v7/node:14.8
 WORKDIR /usr/src/
 COPY package*.json ./
 COPY /assets /usr/src/assets
