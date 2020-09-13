@@ -122,6 +122,9 @@ async function getTwitchAccountInfo(twitchAccounts: string[]) {
         if(err.response){
             if(err.response.status == 401){
                 oauth2Token = '';
+            } else if(err.response.status == 403) {
+                const timeNow = new Date().toISOString();
+                console.log(timeNow + ": Twitch unavailabe");
             } else {
                 console.error(err);
             }

@@ -59,19 +59,17 @@ async function addTwitchAlert(message: Discord.Message, args: string[]) {
             alertChannelID: [discordChannel],
             alertMessage: discordMessage,
         },
-        twitch:{
+        twitch: {
             url: twitchURL,
             userName: twitchUserName
         }
     }
 
 
-
     twitchAccounts.then(accounts => {
-        let currentAccount = accounts.find( account => { account.twitch.userName.toLowerCase() == user.twitch.userName.toLowerCase()});
+        let currentAccount = accounts.find( account => account.twitch.userName.toLowerCase() == user.twitch.userName.toLowerCase());
 
         if(!currentAccount){
-
             accounts.push(user);
             redisStore.updateTwitchAccounts(accounts);
             message.channel.send(`${twitchUserName} was added to the alert list.`);

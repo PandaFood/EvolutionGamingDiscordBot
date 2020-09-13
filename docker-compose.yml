@@ -17,7 +17,11 @@ services:
 
 
   redis:
-    image: redis:6.0-alpine
+    #image: redis:6.0-alpine
+    image: arm32v7/redis:6.0-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
     ports:
       - '6379:6379'
     networks:
@@ -27,3 +31,6 @@ services:
 
 networks:
   redisNet:
+
+volumes:
+  redis-data:
