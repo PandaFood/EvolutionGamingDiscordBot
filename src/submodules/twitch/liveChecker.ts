@@ -42,7 +42,15 @@ async function checkIfLive() {
         twitchAccountNames.push(account.twitch.userName);
     });
 
-    let twitchAccounts = await getTwitchAccountInfo(twitchAccountNames);
+    let twitchAccounts: any;
+
+    try {
+        twitchAccounts = await getTwitchAccountInfo(twitchAccountNames);
+    } catch (error) {
+        const timeNow = new Date().toISOString();
+        console.log(timeNow + " - Error in getting twitch " + error);
+        return;
+    }
 
     localAccounts.forEach(alertAccount => {
         if (diffTwitchAndLocalData(alertAccount, twitchAccounts)){
